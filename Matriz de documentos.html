@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matriz de documentos</title>
+   <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
+            margin: 0;
+        }
+
+        nav {
+            background-color: #00B2A9;
+            color: white;
+            display: flex;
+            justify-content: center;
+            padding: 1rem 2rem;
+            width: 100%;
+            box-sizing: border-box;
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .input {
+            padding: 12px 16px;
+            width: calc(100% - 32px);
+            margin-bottom: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        .card {
+            background-color: #fff;
+            border: 1px solid #00B2A9;
+            border-radius: 8px;
+            padding: 16px;
+            margin-bottom: 16px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+        }
+
+        .client-image-container {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            overflow: hidden;
+            margin-bottom: 12px;
+            border: 3px solid #00B2A9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: #f8f8f8;
+        }
+
+        .client-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
+
+        .card-header {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #00B2A9;
+            text-align: center;
+        }
+
+        .card-content {
+            margin-bottom: 8px;
+            width: 100%;
+        }
+
+        .text-sm {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .text-gray-500 {
+            color: #6B7280;
+        }
+
+        .list-disc {
+            list-style-type: disc;
+            padding-left: 20px;
+        }
+
+        .pl-5 {
+            padding-left: 20px;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 16px;
+        }
+
+        @media (min-width: 768px) {
+            .grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="logo">HISENSE</div>
+    </nav>
+
+    <input type="text" id="searchInput" class="input" placeholder="Buscar cliente..." onkeyup="filterClients()">
+
+    <div id="clientGrid" class="grid"></div>
+
+    <script>
+        const clientData = [
+            
+ { cliente: "Cotsco", imageUrl: "https://1000logos.net/wp-content/uploads/2017/08/Costco-Logo-1993.png", observacion: "", saf: "3", facturas: "3", remision: "", oc: true, confirmacionCita: true, transferenciaChep: true, listaEmbarque: false, formatoEntrega: false, cartaResponsiva: false, paseVehicular: false, plp: false, caratulaEntrega: false, formatoSolicitud: false, revisionUpc: false },
+
+            { cliente: "Cotsco DSV", imageUrl: "https://th.bing.com/th/id/R.08a07e247ab8fad52142d4643287d0fb?rik=%2bPLR2Rl8legkRA&pid=ImgRaw&r=0", observacion: "Liberación por diagrama de carga", saf: "", facturas: "", remision: "", oc: false, confirmacionCita: false, transferenciaChep: false, listaEmbarque: false, formatoEntrega: false, cartaResponsiva: false, paseVehicular: false, plp: false, caratulaEntrega: false, formatoSolicitud: false, revisionUpc: false },
+   
+ {
+        "cliente": "Liverpool tultitlan",
+        "imageUrl": "https://funcionaleslogistica.liverpool.com.mx/Imagenes_1/LogoServLiverpool.jpg",
+        "observacion": "",
+        "saf": "1",
+        "facturas": "",
+        "remision": "3",
+        "oc": true,
+        "confirmacionCita": true,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": false
+    },
+    {
+        "cliente": "Liverpool plan",
+        "imageUrl": "https://fotoluna.mx/wp-content/uploads/2021/12/76-760976_logo-liverpool-tienda-png-liverpool-vision-y-mision-1024x205.png",
+        "observacion": "",
+        "saf": "1",
+        "facturas": "",
+        "remision": "3",
+        "oc": true,
+        "confirmacionCita": true,
+        "transferenciaChep": false,
+        "listaEmbarque": true,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": false
+    },
+    {
+        "cliente": "Amazon",
+        "imageUrl": "https://logo-base.com/logo/amazon-logo.png",
+        "observacion": "Boll y responsiva se conservan.",
+        "saf": "1",
+        "facturas": "",
+        "remision": "",
+        "oc": false,
+        "confirmacionCita": false,
+        "transferenciaChep": false,
+        "listaEmbarque": true,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": false
+    },
+    {
+        "cliente": "Walmart",
+        "imageUrl": "https://logolook.net/wp-content/uploads/2021/06/Symbol-Walmart-2048x1152.png",
+        "observacion": "",
+        "saf": "1",
+        "facturas": "4",
+        "remision": "",
+        "oc": false,
+        "confirmacionCita": false,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": true,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": true
+    },
+    {
+        "cliente": "City Fresko",
+        "imageUrl": "https://www.fresko.com.mx/hazlofresko/images/fresko.png",
+        "observacion": "",
+        "saf": "1",
+        "facturas": "4",
+        "remision": "",
+        "oc": true,
+        "confirmacionCita": true,
+        "transferenciaChep": true,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": true
+    },
+    {
+        "cliente": "SAMS",
+        "imageUrl": "https://logos-marcas.com/wp-content/uploads/2021/10/Sams-Club-Logo.png",
+        "observacion": "",
+        "saf": "1",
+        "facturas": "4",
+        "remision": "",
+        "oc": false,
+        "confirmacionCita": false,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": true,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": true
+    },
+    {
+        "cliente": "Bodesa",
+        "imageUrl": "https://th.bing.com/th/id/R.0c5aa2e2b627f14cd27719936119506c?rik=8jCVnJDK8aWVuw&riu=http%3a%2f%2fcdnwine.diario1.com%2fwp-content%2fuploads%2f2022%2f01%2fBodesa.jpg&ehk=Ra7C96QCkaev9fKmTvw%2bvwlIwwk30gDeuynia6V5jaE%3d&risl=&pid=ImgRaw&r=0",
+        "observacion": "",
+        "saf": "1",
+        "facturas": "3",
+        "remision": "",
+        "oc": true,
+        "confirmacionCita": false,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": true
+    },
+    {
+        "cliente": "Suburbia",
+        "imageUrl": "https://seeklogo.com/images/S/Suburbia_nuevo-logo-471BE0105A-seeklogo.com.png",
+        "observacion": "Predistribución (mandar lista de tiendas).",
+        "saf": "1",
+        "facturas": "",
+        "remision": "3",
+        "oc": true,
+        "confirmacionCita": true,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": false
+    },
+    {
+        "cliente": "Mercado libre",
+        "imageUrl": "https://download.logo.wine/logo/MercadoLibre/MercadoLibre-Logo.wine.png",
+        "observacion": "Solo TV adjuntar confirmación de cita.",
+        "saf": "1",
+        "facturas": "4",
+        "remision": "",
+        "oc": true,
+        "confirmacionCita": true,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": true
+    },
+    {
+        "cliente": "Coopel",
+        "imageUrl": "https://th.bing.com/th/id/OIP.pzm16f3gzjAiXr3r9xBaDQHaHa?rs=1&pid=ImgDetMain",
+        "observacion": "",
+        "saf": "1",
+        "facturas": "3",
+        "remision": "",
+        "oc": false,
+        "confirmacionCita": true,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": false
+    },
+    {
+        "cliente": "Elektra",
+        "imageUrl": "https://seeklogo.com/images/E/elektra-logo-8AC9CE6CB9-seeklogo.com.png",
+        "observacion": "",
+        "saf": "1",
+        "facturas": "3",
+        "remision": "",
+        "oc": true,
+        "confirmacionCita": true,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": true,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": false
+    },
+    {
+        "cliente": "Xaze AC & TV",
+        "imageUrl": "https://terramerida.com/wp-content/uploads/2022/09/image-8.png",
+        "observacion": "",
+        "saf": "1",
+        "facturas": "3",
+        "remision": "",
+        "oc": false,
+        "confirmacionCita": false,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": false
+    },
+    {
+        "cliente": "Xaze LB",
+        "imageUrl": "https://pylsa.org/imgweb/xaze_logo.png",
+        "observacion": "Solo línea blanca. 3 remisiones en lugar de factura.",
+        "saf": "1",
+        "facturas": "",
+        "remision": "3",
+        "oc": false,
+        "confirmacionCita": false,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": false
+    },
+    {
+        "cliente": "Sear",
+        "imageUrl": "https://upload.wikimedia.org/wikipedia/commons/thumb/0/09/Sears_Logo.svg/1024px-Sears_Logo.svg.png",
+        "observacion": "No. Acuse en tinta roja sobre factura.",
+        "saf": "1",
+        "facturas": "4",
+        "remision": "",
+        "oc": true,
+        "confirmacionCita": false,
+        "transferenciaChep": false,
+        "listaEmbarque": true,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": true
+    },
+    {
+        "cliente": "Sanborns",
+        "imageUrl": "https://th.bing.com/th/id/R.7b35b6f5dc1f1a2be159b2c21fd73668?rik=YPbXe6LmsX2%2fUg&riu=http%3a%2f%2fwww.gsanborns.com.mx%2finfo2017%2feng%2fimages%2fsanborns-logo.png&ehk=8gTP9VTSewTwmFoNG5hlDHn0L2HU1qc6iQtz0nUgF7A%3d&risl=&pid=ImgRaw&r=0&sres=1&sresct=1",
+        "observacion": "",
+        "saf": "1",
+        "facturas": "4",
+        "remision": "",
+        "oc": true,
+        "confirmacionCita": false,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": false
+    },
+    {
+        "cliente": "Soriana",
+        "imageUrl": "https://i.pinimg.com/originals/2f/03/15/2f031536c914d18700f97707d3a9c85e.png",
+        "observacion": "Empaque.",
+        "saf": "1",
+        "facturas": "",
+        "remision": "",
+        "oc": true,
+        "confirmacionCita": false,
+        "transferenciaChep": false,
+        "listaEmbarque": false,
+        "formatoEntrega": false,
+        "cartaResponsiva": false,
+        "paseVehicular": false,
+        "plp": false,
+        "caratulaEntrega": false,
+        "formatoSolicitud": false,
+        "revisionUpc": true
+    }
+
+        ];
+
+        function filterClients() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filteredClients = clientData.filter(client => 
+                client.cliente.toLowerCase().includes(searchTerm)
+            );
+
+            const clientGrid = document.getElementById('clientGrid');
+            clientGrid.innerHTML = '';
+
+            if (filteredClients.length === 0) {
+                const generalCard = createGeneralCard();
+                clientGrid.appendChild(generalCard);
+            } else {
+                filteredClients.forEach(client => {
+                    const card = createClientCard(client);
+                    clientGrid.appendChild(card);
+                });
+            }
+        }
+
+      function createGeneralCard() {
+            const generalCard = document.createElement('div');
+            generalCard.classList.add('card');
+
+            const imageContainer = document.createElement('div');
+            imageContainer.classList.add('client-image-container');
+            
+            const clientInitial = document.createElement('span');
+            clientInitial.innerText = 'G';
+            clientInitial.style.fontSize = '36px';
+            clientInitial.style.color = '#00B2A9';
+            imageContainer.appendChild(clientInitial);
+            
+            generalCard.appendChild(imageContainer);
+
+            const generalHeader = document.createElement('div');
+            generalHeader.classList.add('card-header');
+            generalHeader.innerText = "Cliente general";
+            generalCard.appendChild(generalHeader);
+
+            const generalContent = document.createElement('div');
+            generalContent.classList.add('card-content');
+
+            const generalObservation = document.createElement('p');
+            generalObservation.classList.add('text-sm', 'text-gray-500');
+            generalObservation.innerText = "Todo cliente fuera de esta lista.";
+            generalContent.appendChild(generalObservation);
+
+            const requirementsList = document.createElement('ul');
+            requirementsList.classList.add('list-disc', 'pl-5');
+
+            const requirements = [
+                'SAF: 1',
+                'Facturas: 3'
+            ];
+
+            requirements.forEach(req => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('text-sm');
+                listItem.innerText = req;
+                requirementsList.appendChild(listItem);
+            });
+
+            generalContent.appendChild(requirementsList);
+            generalCard.appendChild(generalContent);
+
+            return generalCard;
+        }
+
+        function createClientCard(client) {
+            const card = document.createElement('div');
+            card.classList.add('card');
+
+            const imageContainer = document.createElement('div');
+            imageContainer.classList.add('client-image-container');
+
+            if (client.imageUrl) {
+                const clientImage = document.createElement('img');
+                clientImage.src = client.imageUrl;
+                clientImage.alt = `${client.cliente} logo`;
+                clientImage.classList.add('client-image');
+                imageContainer.appendChild(clientImage);
+            } else {
+                // If no image, display the first letter of the client name
+                const clientInitial = document.createElement('span');
+                clientInitial.innerText = client.cliente.charAt(0).toUpperCase();
+                clientInitial.style.fontSize = '36px';
+                clientInitial.style.color = '#00B2A9';
+                imageContainer.appendChild(clientInitial);
+            }
+
+            card.appendChild(imageContainer);
+
+            const cardHeader = document.createElement('div');
+            cardHeader.classList.add('card-header');
+            cardHeader.innerText = client.cliente;
+            card.appendChild(cardHeader);
+
+            const cardContent = document.createElement('div');
+            cardContent.classList.add('card-content');
+
+            const observation = document.createElement('p');
+            observation.classList.add('text-sm', 'text-gray-500');
+            observation.innerText = client.observacion;
+            cardContent.appendChild(observation);
+
+            const requirementsList = document.createElement('ul');
+            requirementsList.classList.add('list-disc', 'pl-5');
+
+            const requirements = [];
+            if (client.saf) requirements.push(`SAF: ${client.saf}`);
+            if (client.facturas) requirements.push(`Facturas: ${client.facturas}`);
+            if (client.remision) requirements.push(`Remisión: ${client.remision}`);
+            if (client.oc) requirements.push('OC');
+            if (client.confirmacionCita) requirements.push('Confirmación de cita');
+            if (client.transferenciaChep) requirements.push('Transferencia CHEP');
+            if (client.listaEmbarque) requirements.push('Lista de embarque');
+            if (client.formatoEntrega) requirements.push('Formato de entrega');
+            if (client.cartaResponsiva) requirements.push('Carta responsiva');
+            if (client.paseVehicular) requirements.push('Pase vehicular');
+            if (client.plp) requirements.push('PLP');
+            if (client.caratulaEntrega) requirements.push('Carátula de entrega');
+            if (client.formatoSolicitud) requirements.push('Formato de solicitud');
+            if (client.revisionUpc) requirements.push('Revisión UPC');
+
+            requirements.forEach(req => {
+                const listItem = document.createElement('li');
+                listItem.classList.add('text-sm');
+                listItem.innerText = req;
+                requirementsList.appendChild(listItem);
+            });
+
+            cardContent.appendChild(requirementsList);
+            card.appendChild(cardContent);
+
+            return card;
+        }
+
+        window.onload = filterClients;
+    </script>
+</body>
+</html>
